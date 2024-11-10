@@ -1,0 +1,25 @@
+# This file is generated from bundlewrap - DO NOT EDIT MANUALLY
+# {{ path }}
+network:
+    version: 2
+    ethernets:
+        {% for interface_name, interface in config.items() %}
+        {{ interface_name }}:
+            addresses:
+            {% for ip in interface.ip_addresses_prefix -%}
+                - {{ ip }}
+            {% endfor %}
+            {% if interface.gateway is defined %}
+            gateway4: {{ interface.gateway }}
+            {% endif %}
+            match:
+                macaddress: {{ interface.mac }}
+            nameservers:
+                addresses:
+                - 134.130.4.1
+                - 134.130.5.1
+                - 10.190.5.53
+                search:
+                - alania.rwth-aachen.de
+            set-name: {{ interface_name }}
+        {% endfor %}
