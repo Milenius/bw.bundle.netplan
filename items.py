@@ -10,12 +10,12 @@ files = {
             'config': node.metadata.get('interfaces'),
         },
         'content_type': 'jinja2',
-        'filters': {
-            'netmask_to_cidr': netmask_to_cidr,
-        },
         'mode': "0644",
         'owner': "root",
         'group': "root",
+        'triggers': [
+            'action:netplan-apply',
+        ],
     },
 }
 
@@ -24,7 +24,7 @@ actions = {
         'command': "/usr/sbin/netplan apply",
         'expected_return_code': None,
         'needs': [
-            'file:/etc/netplan/50-cloud-init.yaml', 
+            'file:/etc/netplan/50-cloud-init.yaml',
         ]
     }
 }

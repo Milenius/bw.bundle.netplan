@@ -3,15 +3,16 @@
 network:
     version: 2
     ethernets:
-        {% for interface_name, interface in config.items() %}
+        {%- for interface_name in config.keys()|sort %}
+        {%- set interface = config[interface_name] %}
         {{ interface_name }}:
             addresses:
-            {% for ip in interface.ip_addresses_prefix -%}
-                - {{ ip }}
-            {% endfor %}
-            {% if interface.gateway is defined %}
+            {%- for ip in interface.ip_addresses_prefix|sort %}
+            - {{ ip }}
+            {%- endfor %}
+            {%- if interface_name == 'eth0' and interface.gateway is defined %}
             gateway4: {{ interface.gateway }}
-            {% endif %}
+            {%- endif %}
             match:
                 macaddress: {{ interface.mac }}
             nameservers:
@@ -22,17 +23,17 @@ network:
                 search:
                 - alania.rwth-aachen.de
             set-name: {{ interface_name }}
-            {% if interface.routes is defined %}
+            {%- if interface.routes is defined and interface.routes %}
             routes:
-            {% for route in interface.routes %}
-                - to: {{ route.to }}
-                {% if route.via %}
-                  via: {{ route.via }}
-                {% endif %}
-                {% if route.src %}
-                  from: {{ route.src }}
-                {% endif %}
-                  on-link: {{ 'true' if not route.via else 'false' }}
-            {% endfor %}
-            {% endif %}
+            {%- for route in interface.routes %}
+            - to: {{ route.to }}
+              {%- if route.via %}
+              via: {{ route.via }}
+              {%- endif %}
+              {%- if route.src %}
+              from: {{ route.src }}
+              {%- endif %}
+              on-link: {{ 'true' if not route.via else 'false' }}
+            {%- endfor %}
+            {%- endif %}
         {% endfor %}
