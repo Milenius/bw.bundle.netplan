@@ -22,9 +22,9 @@ network:
                 search:
                 - alania.rwth-aachen.de
             set-name: {{ interface_name }}
-            {% if routes and interface_name in routes %}
+            {% if interface.routes is defined %}
             routes:
-            {% for route in routes[interface_name] %}
+            {% for route in interface.routes %}
                 - to: {{ route.to }}
                 {% if route.via %}
                   via: {{ route.via }}

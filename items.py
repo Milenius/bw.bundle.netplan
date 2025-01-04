@@ -8,7 +8,6 @@ files = {
         'source': "etc/netplan/50-cloud-init.yaml.j2",
         'context': {
             'config': node.metadata.get('interfaces'),
-            'routes': node.metadata.get('routes'),
         },
         'content_type': 'jinja2',
         'filters': {
