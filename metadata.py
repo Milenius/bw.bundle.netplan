@@ -1,11 +1,11 @@
 import re
 
-global metadata_reactor, node, repo
+global metadata_reactor, node, repo, DoNotRunAgain
 
 def extract_route_from_option(option):
     """Extract route information from an 'up' option string."""
     if not option.startswith('up ip r add'):
-        return None
+        return {}
 
     # Remove 'up ip r add' prefix
     route_str = option.replace('up ip r add ', '')
@@ -40,27 +40,21 @@ def process_routes_from_options(options):
     routes = []
     for opt in options:
         if opt.startswith('up ip r add'):
-            route = extract_route_from_option(opt)
-            if route:
-                routes.append(route)
+            routes.append(extract_route_from_option(opt))
     return routes
 
 
 @metadata_reactor
 def routes_from_options(metadata):
     """Main metadata reactor function."""
-    # If no interfaces, return empty dict
-    if 'interfaces' not in metadata:
-        return {}
 
     # Initialize result dict
     result = {}
-
     # For each interface in the existing metadata
     for interface_name, interface in metadata.get('interfaces', {}).items():
         # Only process interfaces that have options but no routes
-        if 'options' in interface and 'routes' not in interface:
-            routes = process_routes_from_options(interface['options'])
+        if interface.get('options', []):
+            routes = process_routes_from_options(interface.get('options'))
             if routes:
                 # Only add to result if we have routes to add
                 result[interface_name] = {
@@ -68,4 +62,6 @@ def routes_from_options(metadata):
                 }
 
     # Only return interfaces dict if we have changes
-    return {'interfaces': result} if result else {}
+    return {
+        'interfaces': result
+    }
