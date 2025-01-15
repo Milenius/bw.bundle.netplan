@@ -84,3 +84,18 @@ def add_gateway_as_default_route(metadata):
     return {
         'interfaces': result,
     }
+
+@metadata_reactor
+def add_default_nameservers_and_search_domain(metadata):
+    result = {}
+    for interface_name, interface in metadata.get('interfaces', {}).items():
+        result[interface_name] = {}
+        if not interface.get('nameservers', False):
+            # Add default nameservers
+            result[interface_name]['nameservers'] = metadata.get('nameservers', [])
+        if not interface.get('search_domains', False):
+            result[interface_name]['search_domains'] = [metadata.get('search_domain', [])]
+
+    return {
+        'interfaces': result
+    }
