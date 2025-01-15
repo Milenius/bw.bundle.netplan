@@ -6,7 +6,7 @@ network:
     {%- for interface_name,interface_cfg in interfaces.items() %}
     {{ interface_name }}:
       addresses:
-        {%- for ip in interface_cfg.get('ip_addresses_prefix', []) %}
+        {%- for ip in interface_cfg.get('ip_addresses_prefix', [])|sort|unique %}
         - {{ ip }}
         {%- endfor %}
       {%- if interface_cfg.get('mac', None) %}
