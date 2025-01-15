@@ -65,3 +65,22 @@ def routes_from_options(metadata):
     return {
         'interfaces': result
     }
+
+@metadata_reactor
+def add_gateway_as_default_route(metadata):
+    result = {}
+    for interface_name, interface in metadata.get('interfaces', {}).items():
+        result[interface_name] = {}
+        if interface.get('gateway', False):
+            result[interface_name] = {
+                'routes': [
+                    {
+                        'to': 'default',
+                        'via': interface.get('gateway'),
+                    },
+                ],
+            }
+
+    return {
+        'interfaces': result,
+    }
