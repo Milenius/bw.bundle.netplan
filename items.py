@@ -7,10 +7,10 @@ files = {
     "/etc/netplan/50-cloud-init.yaml": {
         'source': "etc/netplan/50-cloud-init.yaml.j2",
         'context': {
-            'config': node.metadata.get('interfaces'),
+            'interfaces': dict(sorted(node.metadata.get('interfaces', {}).items())),
         },
         'content_type': 'jinja2',
-        'mode': "0644",
+        'mode': "0640",
         'owner': "root",
         'group': "root",
         'triggers': [
@@ -25,6 +25,7 @@ actions = {
         'expected_return_code': None,
         'needs': [
             'file:/etc/netplan/50-cloud-init.yaml',
-        ]
+        ],
+        'triggered': True,
     }
 }

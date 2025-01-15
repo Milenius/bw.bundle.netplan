@@ -1,39 +1,39 @@
 # This file is generated from bundlewrap - DO NOT EDIT MANUALLY
 # {{ path }}
 network:
-    version: 2
-    ethernets:
-        {%- for interface_name in config.keys()|sort %}
-        {%- set interface = config[interface_name] %}
-        {{ interface_name }}:
-            addresses:
-            {%- for ip in interface.ip_addresses_prefix|sort %}
-            - {{ ip }}
-            {%- endfor %}
-            {%- if interface_name == 'eth0' and interface.gateway is defined %}
-            gateway4: {{ interface.gateway }}
-            {%- endif %}
-            match:
-                macaddress: {{ interface.mac }}
-            nameservers:
-                addresses:
-                - 134.130.4.1
-                - 134.130.5.1
-                - 10.190.5.53
-                search:
-                - alania.rwth-aachen.de
-            set-name: {{ interface_name }}
-            {%- if interface.routes is defined and interface.routes %}
-            routes:
-            {%- for route in interface.routes %}
-            - to: {{ route.to }}
-              {%- if route.via %}
-              via: {{ route.via }}
-              {%- endif %}
-              {%- if route.src %}
-              from: {{ route.src }}
-              {%- endif %}
-              on-link: {{ 'true' if not route.via else 'false' }}
-            {%- endfor %}
-            {%- endif %}
-        {% endfor %}
+  version: 2
+  ethernets:
+    {%- for interface_name,interface_cfg in interfaces.items() %}
+    {{ interface_name }}:
+      addresses:
+        {%- for ip in interface_cfg.get('ip_addresses_prefix', []) %}
+        - {{ ip }}
+        {%- endfor %}
+      {%- if interface_cfg.get('mac', None) %}
+      match:
+        macaddress: {{ interface_cfg.get('mac') }}
+      {%- endif %}
+      nameservers:
+        addresses:
+          {%- for nameserver in interface_cfg.get('nameservers', []) %}
+          - {{ nameserver }}
+          {%- endfor %}
+        search:
+          {%- for search_domain in interface_cfg.get('search_domains', []) %}
+          - {{ search_domain }}
+          {%- endfor %}
+      set-name: {{ interface_name }}
+      {%- if interface_cfg.get('routes', []) %}
+      routes:
+      {%- for route in interface_cfg.get('routes', []) %}
+        - to: {{ route.to }}
+          {%- if route.via %}
+          via: {{ route.via }}
+          {%- endif %}
+          {%- if route.src %}
+          from: {{ route.src }}
+          {%- endif %}
+          on-link: {{ 'true' if not route.via else 'false' }}
+      {%- endfor %}
+      {% endif %}
+    {% endfor %}
