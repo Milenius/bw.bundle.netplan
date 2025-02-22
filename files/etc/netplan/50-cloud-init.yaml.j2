@@ -9,6 +9,9 @@ network:
         {%- for ip in interface_cfg.get('ip_addresses_prefix', [])|sort|unique %}
         - {{ ip }}
         {%- endfor %}
+        {%- for ip in interface_cfg.get('ipv6_addresses', [])|sort|unique %}
+        - {{ ip }}{% if not "/" in ip %}/{{ interface_cfg.get('ipv6_netmask', 64) }}{% endif %}
+        {% endfor %}
       {%- if interface_cfg.get('mac', None) %}
       match:
         macaddress: {{ interface_cfg.get('mac') }}
