@@ -97,10 +97,20 @@ def add_default_nameservers_and_search_domain(metadata):
         result[interface_name] = {}
         if not interface.get('nameservers', False):
             # Add default nameservers
-            result[interface_name]['nameservers'] = metadata.get('nameservers', [])
+            result[interface_name]['nameservers'] = metadata.get('nameserver', [])
         if not interface.get('search_domains', False):
             result[interface_name]['search_domains'] = [metadata.get('search_domain', [])]
 
     return {
         'interfaces': result
+    }
+
+@metadata_reactor
+def enable_systemd_iptables(metadata):
+    if not node.has_bundle('iptables'):
+         raise DoNotRunAgain
+    return {
+        'iptables': {
+            'systemd': True,
+        }
     }
