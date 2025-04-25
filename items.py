@@ -10,7 +10,7 @@ files = {
             'interfaces': dict(sorted(node.metadata.get('interfaces', {}).items())),
         },
         'content_type': 'jinja2',
-        'mode': "0640",
+        'mode': "0600",
         'owner': "root",
         'group': "root",
         'triggers': [

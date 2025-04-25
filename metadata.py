@@ -97,7 +97,7 @@ def add_default_nameservers_and_search_domain(metadata):
         result[interface_name] = {}
         if not interface.get('nameservers', False):
             # Add default nameservers
-            result[interface_name]['nameservers'] = metadata.get('nameserver', [])
+            result[interface_name]['nameservers'] = metadata.get('nameservers', [])
         if not interface.get('search_domains', False):
             result[interface_name]['search_domains'] = [metadata.get('search_domain', [])]
 
